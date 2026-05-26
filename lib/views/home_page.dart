@@ -6,14 +6,14 @@ import 'package:post_share/utils/post_card.dart';
 // Import your provider to trigger logouts if necessary
 // import 'package:post_share/providers/auth_provider.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key});
+class HomePage extends ConsumerStatefulWidget {
+  const HomePage({super.key});
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomePage> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomePage> {
   final List<Map<String, String>> _dummyPosts = [
     {
       "username": "alex_dev",

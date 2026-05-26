@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:post_share/services/storage_service.dart';
 
 class AuthService {
   final Dio dio;
+  final StorageService storageService;
 
-  AuthService(this.dio);
+  AuthService(this.dio, this.storageService);
 
   final String baseUrl = "${dotenv.env['API_BASE_URL']}";
 
@@ -22,7 +24,6 @@ class AuthService {
       final String serverMessage =
           e.response?.data['detail'] ?? 'An unknown error occurred';
       throw Exception(serverMessage);
-      print("Failed: $serverMessage");
     }
   }
 
@@ -38,15 +39,18 @@ class AuthService {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        print(response.data["access_token"]);
-        return response.data["access_token"] as String?;
+        final token = response.data["access_token"] as String?;
+        if (token != null) {
+          storageService.saveToken(token);
+        }
+
+        return token;
       }
       return null;
     } on DioException catch (e) {
       final String serverMessage =
           e.response?.data['detail'] ?? 'An unknown error occurred';
       throw Exception(serverMessage);
-      print("Failed: $serverMessage");
     }
   }
 }

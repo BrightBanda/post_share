@@ -1,30 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:post_share/utils/add_medial_container.dart';
 import 'package:post_share/utils/app_colors.dart';
+import 'package:post_share/utils/app_snackbar.dart';
+import 'package:post_share/viewmodels/create_post_page_viewmodel.dart';
+import 'package:post_share/views/home_page.dart';
 
-class CreatePostPage extends StatefulWidget {
-  const CreatePostPage({super.key});
-
-  @override
-  State<CreatePostPage> createState() => _CreatePostPageState();
-}
-
-class _CreatePostPageState extends State<CreatePostPage> {
-  final TextEditingController _postController = TextEditingController();
+class CreatePostPage extends ConsumerWidget {
+  final TextEditingController _captionController = TextEditingController();
+  CreatePostPage({super.key});
 
   @override
-  void dispose() {
-    _postController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final createPostState = ref.watch(createPostProvider);
+    ref.listen<AsyncValue<String>>(createPostProvider, (previous, next) {
+      next.whenOrNull(
+        data: (message) {
+          if (message == "Success") {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (builder) => HomePage()),
+            );
+          }
+        },
+        error: (error, StackTrace) {
+          AppSnackbar.show(context: context, message: error.toString());
+        },
+      );
+    });
     return Scaffold(
       backgroundColor: Colors.white, // Pure white background
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: const BackButton(color: Colors.black),
         title: const Text(
           'Create Post',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
@@ -49,7 +57,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   ),
                   const SizedBox(width: 12),
                   const Text(
-                    'Alex Morgan',
+                    'Alex Dev',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ],
@@ -59,7 +67,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
               // Post Text Field
               Expanded(
                 child: TextField(
-                  controller: _postController,
+                  controller: _captionController,
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
                   decoration: InputDecoration(
@@ -75,46 +83,14 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 onTap: () {
                   // Handle media upload logic here
                 },
-                child: Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    gradient: LinearGradient(
-                      colors: [
-                        AppColors.primaryYellow.withOpacity(0.3),
-                        AppColors.accentOrange.withOpacity(0.2),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    border: Border.all(
-                      color: AppColors.accentOrange.withOpacity(0.5),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.add_photo_alternate_outlined,
-                        size: 40,
-                        color: AppColors.accentOrange.withOpacity(0.8),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Add Photos or Video',
-                        style: TextStyle(
-                          color: AppColors.accentOrange.withOpacity(0.9),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                child: AddMedialContainer(),
               ),
               const SizedBox(height: 24),
 
-              // Gradient Publish Button
+              //show loading indicatar
+              if (createPostState.isLoading)
+                Center(child: CircularProgressIndicator()),
+              //Publish Button
               Container(
                 height: 54,
                 decoration: BoxDecoration(
@@ -122,17 +98,31 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   borderRadius: BorderRadius.circular(30),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.accentOrange.withOpacity(0.3),
+                      color: AppColors.accentOrange.withValues(alpha: 0.3),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
+
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Handle post publishing logic
-                    print("Publishing: ${_postController.text}");
-                  },
+                  onPressed: createPostState.isLoading
+                      ? null
+                      : () {
+                          // Handle post publishing logic
+                          ref
+                              .read(createPostProvider.notifier)
+                              .createPost(
+                                caption: _captionController.text,
+                                image_url: "image_url",
+                              );
+                          AppSnackbar.show(
+                            context: context,
+                            message: _captionController.text,
+                            color: Colors.green,
+                          );
+                          print("Publishing: ${_captionController.text}");
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,

@@ -39,6 +39,7 @@ dependencies:
   flutter_dotenv: ^5.2.1
   circle_nav_bar: ^2.2.0
   top_snackbar_flutter: ^3.3.0
+  flutter_secure_storage: ^10.3.0
 
 dev_dependencies:
   flutter_test:

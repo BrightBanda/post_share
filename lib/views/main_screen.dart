@@ -10,7 +10,7 @@ import 'package:post_share/views/profile_page.dart';
 class MainScreen extends ConsumerWidget {
   MainScreen({super.key});
 
-  List<Widget> screens = [HomeScreen(), CreatePostPage(), ProfilePage()];
+  List<Widget> screens = [HomePage(), CreatePostPage(), ProfilePage()];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
