@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:post_share/providers/feed_provider.dart';
 import 'package:post_share/utils/app_colors.dart';
+import 'package:post_share/utils/app_snackbar.dart';
 import 'package:post_share/utils/create_post_box.dart';
 import 'package:post_share/utils/post_card.dart';
 // Import your provider to trigger logouts if necessary
@@ -14,36 +16,16 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomePage> {
-  final List<Map<String, String>> _dummyPosts = [
-    {
-      "username": "alex_dev",
-      "time": "5m ago",
-      "content":
-          "Just finished setting up my FastAPI backend authentication using OAuth2PasswordRequestForm. Working flawlessly with Flutter now! 🚀",
-    },
-    {
-      "username": "riverpod_fan",
-      "time": "2h ago",
-      "content":
-          "Riverpod 3 AsyncNotifier makes handling local network states and loading spinners incredibly easy. Goodbye manual setState boilerplate.",
-    },
-    {
-      "username": "flutter_coder",
-      "time": "1d ago",
-      "content":
-          "Does anyone know the best way to securely save JWT access tokens on Android and iOS? Thinking about using flutter_secure_storage.",
-    },
-  ];
-
   Future<void> _handleRefresh() async {
-    // Simulate network latency when pulling down to refresh the feed
+    ref.invalidate(feedProvider);
+    await ref.read(feedProvider.future).catchError((_) => []);
     await Future.delayed(const Duration(seconds: 1));
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Feed updated!'),
-          duration: Duration(seconds: 1),
-        ),
+      AppSnackbar.show(
+        context: context,
+        message: "Feed refreshed",
+        color: AppColors.accentOrange,
+        duration: Duration(seconds: 1),
       );
     }
   }
@@ -60,6 +42,7 @@ class _HomeScreenState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final feedAsync = ref.watch(feedProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -77,22 +60,37 @@ class _HomeScreenState extends ConsumerState<HomePage> {
       ),
       body: RefreshIndicator(
         onRefresh: _handleRefresh,
-        child: ListView.builder(
-          padding: const EdgeInsets.all(12.0),
-          itemCount:
-              _dummyPosts.length +
-              1, // +1 to include the "Create Post" box at the top
-          itemBuilder: (context, index) {
-            // Index 0 renders the post creation box
-            if (index == 0) {
-              return const CreatePostBox();
-            }
+        child: feedAsync.when(
+          data: (posts) {
+            return ListView.builder(
+              padding: const EdgeInsets.all(12.0),
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: posts.length,
+              itemBuilder: (context, index) {
+                // Map index back down to database list bounds
+                final post = posts[index];
 
-            // Adjust index by 1 to pull data out of your data collection correctly
-            final post = _dummyPosts[index - 1];
-
-            return PostCard(post: post);
+                // ✅ PostCard automatically expects an structure payload map or model representation
+                return PostCard(post: post);
+              },
+            );
           },
+          error: (err, st) => ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+              Center(
+                child: Text(
+                  "Error loading feed: ${err.toString().replaceAll("Exception:", "")}",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
+          loading: () => const Center(
+            child: CircularProgressIndicator(color: AppColors.accentOrange),
+          ),
         ),
       ),
     );

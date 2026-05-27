@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PostCard extends StatelessWidget {
-  // Pass the post data map into the widget via constructor
-  final Map<String, String> post;
+  final Map<String, dynamic> post;
 
   // Optional callbacks if you want to make buttons functional later
   final VoidCallback? onLikePressed;
@@ -55,7 +54,7 @@ class PostCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        post['time'] ?? '',
+                        post['created_at'] ?? '',
                         style: TextStyle(
                           color: Colors.grey.shade600,
                           fontSize: 12,
@@ -72,7 +71,7 @@ class PostCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              post['content'] ?? '',
+              post['caption'] ?? '',
               style: const TextStyle(fontSize: 15, height: 1.4),
             ),
             const SizedBox(height: 12),

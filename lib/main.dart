@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:post_share/views/login_page.dart';
+import 'package:post_share/views/main_screen.dart';
 import 'package:post_share/views/register_page.dart';
 import 'package:post_share/views/test_page.dart';
 

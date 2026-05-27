@@ -23,7 +23,11 @@ class MainScreen extends ConsumerWidget {
           Icon(Icons.add_circle_outline, color: Colors.blue),
           Icon(Icons.account_circle_outlined, color: Colors.blue),
         ],
-        inactiveIcons: const [Text("Feed"), Text("Create"), Text("Profile")],
+        inactiveIcons: const [
+          Icon(Icons.airplay_outlined, color: Colors.deepPurpleAccent),
+          Icon(Icons.add_circle_outline, color: Colors.deepPurpleAccent),
+          Icon(Icons.account_circle_outlined, color: Colors.deepPurpleAccent),
+        ],
         color: Colors.white,
         circleColor: Colors.white,
         height: 60,

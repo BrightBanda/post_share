@@ -33,7 +33,7 @@ class AuthService {
   }) async {
     try {
       final response = await dio.post(
-        "${dotenv.env['API_BASE_URL']}/auth/login",
+        "$baseUrl/auth/login",
         data: FormData.fromMap({"username": email, "password": password}),
         options: Options(contentType: Headers.formUrlEncodedContentType),
       );

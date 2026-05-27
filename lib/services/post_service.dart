@@ -10,23 +10,24 @@ class PostService {
   Future<void> createPost({
     required String caption,
     required String? image_url,
-    required String? token,
   }) async {
     try {
       final response = await dio.post(
         "$base_url/posts/",
         data: {"caption": caption, "image_url": image_url},
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
-          },
-        ),
       );
     } on DioException catch (e) {
       final String serverMessage =
           e.response?.data["detail"] ?? "an unknown error occured";
       throw Exception(serverMessage);
     }
+  }
+
+  Future<List<dynamic>> fetchFeed() async {
+    final response = await dio.get("$base_url/posts/feed");
+    if (response.statusCode == 200) {
+      return response.data as List<dynamic>;
+    }
+    throw Exception("failed to load feed");
   }
 }
