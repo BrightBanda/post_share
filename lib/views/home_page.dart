@@ -44,9 +44,10 @@ class _HomeScreenState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final feedAsync = ref.watch(feedProvider);
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 231, 231, 231),
       appBar: AppBar(
         title: const Text(
-          'post_share',
+          'POST SHARE',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         backgroundColor: AppColors.accentOrange,
@@ -63,7 +64,7 @@ class _HomeScreenState extends ConsumerState<HomePage> {
         child: feedAsync.when(
           data: (posts) {
             return ListView.builder(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(6.0),
               physics: const AlwaysScrollableScrollPhysics(),
               itemCount: posts.length,
               itemBuilder: (context, index) {

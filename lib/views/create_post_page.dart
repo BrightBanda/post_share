@@ -17,6 +17,7 @@ class CreatePostPage extends ConsumerWidget {
       next.whenOrNull(
         data: (message) {
           if (message == "Success") {
+            print(message);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (builder) => HomePage()),
@@ -116,12 +117,6 @@ class CreatePostPage extends ConsumerWidget {
                                 caption: _captionController.text,
                                 image_url: "image_url",
                               );
-                          AppSnackbar.show(
-                            context: context,
-                            message: _captionController.text,
-                            color: Colors.green,
-                          );
-                          print("Publishing: ${_captionController.text}");
                         },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,

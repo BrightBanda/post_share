@@ -27,9 +27,9 @@ class PostCard extends StatelessWidget {
         : '?';
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12.0),
+      margin: const EdgeInsets.only(bottom: 6.0),
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -87,8 +87,8 @@ class PostCard extends StatelessWidget {
                 ),
                 TextButton.icon(
                   onPressed: onCommentPressed ?? () {},
-                  icon: const Icon(Icons.comment_outlined, size: 20),
-                  label: const Text('Comment'),
+                  icon: const Icon(Icons.bookmark_add_outlined, size: 20),
+                  label: const Text('Save'),
                 ),
                 TextButton.icon(
                   onPressed: onSharePressed ?? () {},
